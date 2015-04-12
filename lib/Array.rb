@@ -1,0 +1,7 @@
+# Adding unshuffle method to Array class
+class Array
+  def unshuffle(random:)
+    transformed_order = (0...length).to_a.shuffle!(random: random)
+    sort_by.with_index { |_, i| transformed_order[i] }
+  end
+end
