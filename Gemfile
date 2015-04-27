@@ -8,6 +8,8 @@ gem 'json'
 gem 'rake'
 gem 'activerecord'
 gem 'sinatra-activerecord'
+gem 'rbnacl-libsodium'
+gem 'config_env'
 
 group :development do
   gem 'sqlite3'

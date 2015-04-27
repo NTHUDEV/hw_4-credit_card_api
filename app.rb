@@ -1,8 +1,14 @@
 require 'sinatra'
+require 'rbnacl/libsodium'
+require 'config_env'
 require_relative './model/credit_card.rb'
 #require './lib/credit_card.rb'
 
 class CreditCardAPI < Sinatra::Base
+
+configure :development, :test do
+  ConfigEnv.path_to_config("./config/config_env.rb")
+end
 
 get '/' do
 "CreditCardAPI by Enigma Manufacturing is up and running."
