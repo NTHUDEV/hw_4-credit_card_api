@@ -11,7 +11,8 @@ gem 'sinatra-activerecord'
 gem 'rbnacl-libsodium'
 gem 'config_env'
 
-group :development do
+group :development, :test do
   gem 'sqlite3'
   gem 'tux'
+  gem 'hirb'
 end

@@ -4,6 +4,7 @@ require_relative '../environments'
 require 'json'
 require 'openssl'
 require 'rbnacl/libsodium'
+require 'base64'
 
 # Class CreditCard
 class CreditCard < ActiveRecord::Base
@@ -27,6 +28,7 @@ class CreditCard < ActiveRecord::Base
     # TODO: setup the hash with all instance vairables to serialize into json
     { number: number, expiration_date: expiration_date, owner: owner, credit_network: credit_network }.to_json
   end
+
   # returns all card information as single string
   def to_s
     to_json
@@ -61,12 +63,19 @@ class CreditCard < ActiveRecord::Base
 
   def number=(cc_num)
     box_closed = RbNaCl::SecretBox.new(key)
-    self.nonce = RbNaCl::Random.random_bytes(box_closed.nonce_bytes)
-    self.encrypted_number = box_closed.encrypt(self.nonce,cc_num)
+    nonce = RbNaCl::Random.random_bytes(box_closed.nonce_bytes)
+    encrypt_num = box_closed.encrypt(nonce,cc_num)
+
+    #encoded using base64 to eliminate encoding issues
+    self.nonce = Base64.urlsafe_encode64(nonce)
+    self.encrypted_number = Base64.urlsafe_encode64(encrypt_num)
   end
 
   def number
     box_open = RbNaCl::SecretBox.new(key)
-    box_open.decrypt(self.nonce, self.encrypted_number)
+    #decoded using base64 to eliminate encoding issues
+    nonce = Base64.urlsafe_decode64(self.nonce)
+    encrypt_num = Base64.urlsafe_decode64(self.encrypted_number)
+    box_open.decrypt(nonce, encrypt_num)
   end
 end
