@@ -16,3 +16,9 @@ group :development, :test do
   gem 'tux'
   gem 'hirb'
 end
+
+group :test do
+  gem 'minitest'
+  gem 'rack'
+  gem 'rack-test'
+end

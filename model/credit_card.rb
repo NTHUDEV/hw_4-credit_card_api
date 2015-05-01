@@ -58,7 +58,8 @@ class CreditCard < ActiveRecord::Base
   end
 
   def key
-      ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
+    Base64.urlsafe_decode64(ENV['DB_KEY'])
+    #ENV['DB_KEY'].dup.force_encoding Encoding::BINARY
   end
 
   def number=(cc_num)

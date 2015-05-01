@@ -14,6 +14,9 @@ end
 
 get '/' do
 "CreditCardAPI by Enigma Manufacturing is up and running."
+end
+
+get '/index' do
 begin
 
   halt 200, CreditCard.all.to_json

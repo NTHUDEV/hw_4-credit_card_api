@@ -73,6 +73,9 @@ DEPENDENCIES
   config_env
   hirb
   json
+  minitest
+  rack
+  rack-test
   rake
   rbnacl-libsodium
   sinatra
