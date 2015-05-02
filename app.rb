@@ -2,21 +2,24 @@ require 'sinatra'
 require 'rbnacl/libsodium'
 require 'config_env'
 require_relative './model/credit_card.rb'
+require 'haml'
+require_relative 'helpers/creditcard_helper'
 #require './lib/credit_card.rb'
 
 class CreditCardAPI < Sinatra::Base
-
+include CreditCardHelper
 configure :development, :test do
   ConfigEnv.path_to_config("./config/config_env.rb")
   require 'hirb'
   Hirb.enable
 end
 
-get '/' do
-"CreditCardAPI by Enigma Manufacturing is up and running."
+#API
+get '/api/v1/' do
+  "CreditCardAPI by Enigma Manufacturing is up and running."
 end
 
-get '/index' do
+get '/api/v1/index' do
 begin
 
   halt 200, CreditCard.all.to_json
@@ -45,5 +48,33 @@ post '/api/v1/credit_card' do
   rescue
     halt 410, "I'm sorry Dave, I'm afraid I can't do that. -HAL9000"
   end
+end
+
+#web app
+get '/' do
+  haml :index
+end
+
+get '/validate' do
+  haml :validate
+end
+
+post '/validate' do
+  card_num = params[:credit_card_num].to_s unless params[:credit_card_num].empty?
+  @validation_results = validate_card(card_num)
+  haml :validate
+end
+
+get '/newcard' do
+  haml :newcard
+end
+
+post '/newcard' do
+  cc_num = params[:credit_card_num].to_s unless params[:credit_card_num].empty?
+  cc_owner = params[:cc_owner].to_s unless params[:cc_owner].empty?
+  cc_exp_date = params[:cc_exp_date].to_s unless params[:cc_exp_date].empty?
+  cc_credit_nt = params[:cc_net].to_s unless params[:cc_net].empty?
+  @creation_results = new_card(cc_num, cc_owner, cc_exp_date, cc_credit_nt)
+  haml :newcard
 end
 end
