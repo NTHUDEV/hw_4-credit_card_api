@@ -1,8 +1,11 @@
 require_relative '../lib/luhn_validator.rb'
 require 'sinatra/activerecord'
-require_relative '../environments'
+require_relative '../environments.rb'
 require 'json'
 require 'openssl'
+require 'rbnacl/libsodium'
+require 'config_env'
+require 'base64'
 
 # Class CreditCard
 class CreditCard < ActiveRecord::Base
@@ -18,13 +21,33 @@ class CreditCard < ActiveRecord::Base
     #@credit_network = credit_network
  # end
   # returns json string
+  def key
+    Base64.urlsafe_decode64(ENV['DB_KEY'])
+  end
+
+  def number=(numb)
+    secret_box = RbNaCl::SecretBox.new(key)
+    nonce = RbNaCl::Random.random_bytes(secret_box.nonce_bytes)
+    encrypted_numb = secret_box.encrypt(nonce, numb)
+    self.nonce = Base64.urlsafe_encode64(nonce)
+    self.encrypted_number = Base64.urlsafe_encode64(encrypted_numb)
+  end
+
+  def number
+    secret_box = RbNaCl::SecretBox.new(key)
+    nonce = Base64.urlsafe_decode64(self.nonce)
+    encrypted_numb = Base64.urlsafe_decode64(self.encrypted_number)
+    secret_box.decrypt(nonce, encrypted_numb)
+  end
+
   def to_json
     # TODO: setup the hash with all instance vairables to serialize into json
     { number: number, expiration_date: expiration_date, owner: owner, credit_network: credit_network }.to_json
   end
   # returns all card information as single string
   def self.to_s
-    return "#{@number}, #{@expiration_date}, #{@owner}, #{@credit_network}"
+    "#{:number_encrypted}, #{:expiration_date}, #{:owner}, #{:credit_network}"
+    #self.to_json
   end
 
   # return a new CreditCard object given a serialized (JSON) representation
