@@ -9,7 +9,7 @@ configure :test do
 end
 
 configure :production do
-  db = URL.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/mydb')
+  db = URI.parse(ENV['DATABASE_URL'] || 'postgres:///localhost/mydb')
 
   ActiveRecord::Base.establish_connection(
     adpater: db.scheme == 'postgres' ? 'postgresql' : db.scheme,
