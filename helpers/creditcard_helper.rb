@@ -10,13 +10,16 @@ module CreditCardHelper
 
     mycc = CreditCard.new(:number => ccnum.to_s,:expiration_date => exp_date.to_s,:owner => owner.to_s,:credit_network => credit_nt.to_s)
 
-    mycc.save unless mycc.validate_checksum
+    unless mycc.validate_checksum then
+       { :message => "We could not store your credit card. :("}
+    else
+      mycc.save
+      { :message => "We stored your credit card! :)"}
 
-    #check if cc was saved, if yes return hash with data, else an err message
-    #if mycc.empty? ?
-    { :number => mycc.number,
-      :owner => mycc.owner,
-      :expiration_date => mycc.expiration_date,
-      :credit_network => mycc.credit_network}
+      #{ :number => mycc.number,
+      #  :owner => mycc.owner,
+      #  :expiration_date => mycc.expiration_date,
+      #  :credit_network => mycc.credit_network}
+    end
   end
 end
