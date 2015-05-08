@@ -22,4 +22,14 @@ module CreditCardHelper
       #  :credit_network => mycc.credit_network}
     end
   end
+
+  def login_user(user)
+  session[:user_id]=user.id
+  redirect '/'
+  end
+  
+  def logout_user
+  session[:user_id]=nil
+  redirect '/'
+  end
 end
