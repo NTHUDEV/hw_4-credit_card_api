@@ -11,6 +11,7 @@ gem 'sinatra-activerecord'
 gem 'rbnacl-libsodium'
 gem 'config_env'
 gem 'haml'
+gem 'protected_attributes'
 
 group :development, :test do
   gem 'sqlite3'
