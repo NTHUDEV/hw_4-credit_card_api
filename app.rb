@@ -69,8 +69,7 @@ end
 post '/login' do
   username = params[:username]
   password = params[:password]
-  puts username
-  puts password
+
   user = User.authenticate!(username,password)
   user ? login_user(user) : redirect('/')
 end
