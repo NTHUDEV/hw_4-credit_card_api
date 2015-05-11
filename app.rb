@@ -78,10 +78,6 @@ get '/logout' do
   logout_user
 end
 
-get '/logout' do
-  logout_user
-end
-
 get '/register' do
   haml :register
 end
@@ -92,11 +88,18 @@ post '/register' do
   email = params[:email]
   password = params[:password]
   password_confirm = params[:password_confirm]
+  address = params[:address]
+  full_name = params[:full_name]
+  dob = params[:dob]
   begin
     if password == password_confirm
       new_user = User.new(username: username, email: email)
       new_user.password = password
-      new_user.save! ? login_user(new_user) : fail('Could not create new user')
+      new_user.field_encrypt(address,:address)
+      new_user.field_encrypt(full_name,:full_name)
+      new_user.field_encrypt(dob,:dob)
+      #new_user.save! ? login_user(new_user) : fail('Could not create new user')
+      new_user.save! ? redirect('/login') : fail('Could not create new user')
     else
       fail 'Passwords do not match'
     end
