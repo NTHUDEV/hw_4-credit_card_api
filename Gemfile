@@ -9,6 +9,7 @@ gem 'sinatra-activerecord'
 gem 'rbnacl-libsodium'
 gem 'config_env'
 gem 'protected_attributes'
+gem 'haml'
 
 group :development, :test do
   gem 'hirb'
@@ -17,6 +18,7 @@ end
 group :development do
   gem 'sqlite3'
   gem 'tux'
+  gem 'shotgun'
 end
 
 group :test do

@@ -1,0 +1,16 @@
+!!! 5
+%html
+  %head
+    %title CREDIT CARD 
+  %body
+    %h1 Welcome to Credit Card APP
+    - if @current_user
+      = "Welcome #{@current_user.username} | "
+      %a{href: 'logout'}
+        logout
+    - else
+      %a{href: '/login'}
+        = "login | "
+      %a{href: '/register'}
+        = "register"
+    = yield
