@@ -1,4 +1,4 @@
-ruby '2.0.0'
+ruby '2.3.0'
 
 gem 'sinatra'
 gem 'thin'
@@ -8,7 +8,7 @@ gem 'activerecord'
 gem 'sinatra-activerecord'
 gem 'rbnacl-libsodium'
 gem 'config_env'
-
+gem 'protected_attributes'
 
 group :development, :test do
   gem 'hirb'
