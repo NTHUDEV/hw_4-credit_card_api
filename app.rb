@@ -20,7 +20,7 @@ class CreditCardAPI < Sinatra::Base
     @current_user = session[:user_id] ? User.find_by_id(session[:usser_id]) : nil
   end
 
-  get '/' do
+  get '/api/v1/' do
     halt 200, 'APP Running and Working'
   end
 
