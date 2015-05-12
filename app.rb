@@ -2,6 +2,7 @@ require 'sinatra'
 require_relative './model/credit_card.rb'
 require 'json'
 require 'config_env'
+require_relative './model/user.rb'
 require_relative './helpers/card_helper.rb'
 require 'rack'
 
@@ -17,7 +18,7 @@ class CreditCardAPI < Sinatra::Base
   end
   
   before do
-    @current_user = session[:user_id] ? User.find_by_id(session[:usser_id]) : nil
+    @current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
   end
 
   get '/api/v1/' do
@@ -97,6 +98,7 @@ class CreditCardAPI < Sinatra::Base
         new_user.dob = new_user.encrypt(dob)
         new_user.fullname = new_user.encrypt(fullname)
         new_user.address = new_user.encrypt(address)
+        new_user.save! ? login_user(new_user) : fail('Could not create new user')
       else
         fail 'Passwords do not match'
       end
@@ -121,5 +123,21 @@ class CreditCardAPI < Sinatra::Base
     end
   end
 
+  get '/newcard' do
+    haml :newcard
+  end
   
+  post '/newcard' do
+    begin
+      cc_num = params[:card_number].to_s unless params[:card_number].empty?
+      cc_owner = params[:owner].to_s unless params[:owner].empty?
+      cc_expiration = params[:expiration_date].to_s unless params[:expiration_date].empty?
+      cc_network = params[:network].to_s unless params[:network].empty?
+      @creation = new_card(cc_num, cc_owner, cc_expiration, cc_network)
+      haml :newcard
+    #rescue => e
+     # puts e
+      #halt 400, "Check the parameters, it's seems you are in trouble"
+    end
+  end
 end

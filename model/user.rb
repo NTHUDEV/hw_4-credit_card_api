@@ -7,9 +7,9 @@ require 'base64'
 class User < ActiveRecord::Base
   validates :username, presence: true, uniqueness: true
   validates :fullname, presence: true, uniqueness: true
-  validates :email, presence: true, format: /.+@.+\..+/i
+  validates :email, presence: true, format: /@/
   validates :address, presence: true
-  validates :dob, presence: true, format: /\d{2}\/\d{2}\/\d{4}/
+  validates :dob, presence: true
   validates :hashed_password, presence: true
   
 
@@ -22,12 +22,16 @@ class User < ActiveRecord::Base
     self.hashed_password = Base64.urlsafe_encode64(digest)
   end
 
+  def key
+    Base64.urlsafe_decode64(ENV['DB_KEY'])   
+  end
+
   def encrypt(data)
     secret_box = RbNaCl::SecretBox.new(key)
     nonce_data = RbNaCl::Random.random_bytes(secret_box.nonce_bytes)
-    encrypted_data = secret_box.encrypt(nonce_data, data)
-    self.nonce_data = Base64.urlsafe_encode64(nonce_data)
-    return Base64.urlsafe_encode64(encrypted_numb)
+    self.nonce_data ||= Base64.urlsafe_encode64(nonce_data)
+    encrypted_data = secret_box.encrypt(Base64.urlsafe_decode64(self.nonce_data), data)
+    return Base64.urlsafe_encode64(encrypted_data)
   end
 
   def decrypt(encrypted)
