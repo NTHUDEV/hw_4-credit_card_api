@@ -115,7 +115,7 @@ class CreditCardAPI < Sinatra::Base
       cc_num = params[:card_number].to_s unless params[:card_number].empty?
       @validation = validate_card(cc_num)
       haml :validate
-    rescue => 3
+    rescue => e
       puts e
       halt 400, "Check if credit Card Number are Intergers"
     end
