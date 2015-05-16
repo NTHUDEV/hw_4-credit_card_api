@@ -27,9 +27,10 @@ module CreditCardHelper
   session[:user_id]=user.id
   redirect '/'
   end
-  
+
   def logout_user
   session[:user_id]=nil
+  flash[:notice] = "You have been logged out. Now get out."
   redirect '/'
   end
 end

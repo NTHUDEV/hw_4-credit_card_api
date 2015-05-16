@@ -12,6 +12,8 @@ gem 'rbnacl-libsodium'
 gem 'config_env'
 gem 'haml'
 gem 'protected_attributes'
+gem 'rack-flash3'
+gem 'jwt'
 
 group :development, :test do
   gem 'sqlite3'

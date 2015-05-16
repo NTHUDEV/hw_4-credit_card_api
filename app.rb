@@ -5,17 +5,26 @@ require_relative './model/credit_card.rb'
 require_relative './model/user.rb'
 require 'haml'
 require_relative 'helpers/creditcard_helper'
+require 'rack-flash'
 #require './lib/credit_card.rb'
 
 class CreditCardAPI < Sinatra::Base
 include CreditCardHelper
-use Rack::Session::Cookie
-enable :logging
+#use Rack::Session::Cookie
+#enable :logging
+
 configure :development, :test do
   ConfigEnv.path_to_config("./config/config_env.rb")
   require 'hirb'
   Hirb.enable
 end
+
+configure do
+  use Rack::Session::Cookie
+  enable :logging
+  use Rack::Flash, :sweep => true
+end
+
 
 before do
 @current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
@@ -99,9 +108,12 @@ post '/register' do
       new_user.field_encrypt(full_name,:full_name)
       new_user.field_encrypt(dob,:dob)
       #new_user.save! ? login_user(new_user) : fail('Could not create new user')
-      new_user.save! ? redirect('/login') : fail('Could not create new user')
+      #new_user.save! ? redirect('/login') : fail('Could not create new user')
+      new_user.save! ? redirect('/login') : flash[:error] = "All fields are required"
+
     else
-      fail 'Passwords do not match'
+      #fail 'Passwords do not match'
+      flash[:error] = "Passwords do not match."
     end
   rescue => e
     logger.error(e)
