@@ -93,31 +93,25 @@ end
 
 post '/register' do
   logger.info('REGISTER')
-  username = params[:username]
-  email = params[:email]
-  password = params[:password]
-  password_confirm = params[:password_confirm]
-  address = params[:address]
-  full_name = params[:full_name]
-  dob = params[:dob]
+  
   begin
-    if password == password_confirm
-      new_user = User.new(username: username, email: email)
-      new_user.password = password
-      new_user.field_encrypt(address,:address)
-      new_user.field_encrypt(full_name,:full_name)
-      new_user.field_encrypt(dob,:dob)
-      #new_user.save! ? login_user(new_user) : fail('Could not create new user')
-      #new_user.save! ? redirect('/login') : fail('Could not create new user')
-      new_user.save! ? redirect('/login') : flash[:error] = "All fields are required"
+    if params[:password] == params[:password_confirm]
+      params[:username] != "" && params[:email] != nil ? new_user = User.new(username: params[:username], email: params[:email]) : fail(flash[:error] = "All fields are required")
+      params[:password] != "" ? new_user.password = params[:password] : fail(flash[:error] = "Nice try smartass.")
+      params[:address] != "" ? new_user.field_encrypt(params[:address],:address) : fail(flash[:error] = "So...where do you live?")
+      params[:full_name] != "" ? new_user.field_encrypt(params[:full_name],:full_name) : fail(flash[:error] = "We require a full name.")
+      params[:dob] != "" ? new_user.field_encrypt(params[:dob],:dob) : fail(flash[:error] = "DOB is blank")
+
+      new_user.save! ? redirect('/login') : fail(flash[:error] = "All fields are required")
 
     else
-      #fail 'Passwords do not match'
-      flash[:error] = "Passwords do not match."
+      fail flash[:error] = "Passwords do not match."
     end
   rescue => e
     logger.error(e)
+    flash[:error] = "Well this happened: #{e}"
     redirect '/register'
+
   end
 end
 
