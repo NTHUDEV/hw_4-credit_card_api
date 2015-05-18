@@ -100,21 +100,20 @@ post '/register' do
 
   begin
     if params[:password] == params[:password_confirm]
-      params[:username] != "" && params[:email] != nil ? new_user = User.new(username: params[:username], email: params[:email]) : fail(flash[:error] = "All fields are required")
-      params[:password] != "" ? new_user.password = params[:password] : fail(flash[:error] = "Nice try smartass.")
-      params[:address] != "" ? new_user.field_encrypt(params[:address],:address) : fail(flash[:error] = "So...where do you live?")
-      params[:full_name] != "" ? new_user.field_encrypt(params[:full_name],:full_name) : fail(flash[:error] = "We require a full name.")
-      params[:dob] != "" ? new_user.field_encrypt(params[:dob],:dob) : fail(flash[:error] = "DOB is blank")
+      fail('You did not specify a user name.') unless params[:username] != ""
+      fail('Nice try smartass. Password cannot be blank.') unless params[:password] !=""
+      fail('So...where do you live?') unless params[:address] !=""
+      fail('You do not expect us to call by your username...right?') unless params[:full_name] !=""
+      fail('Yeah, we need your DOB even though you are hiding it.') unless params[:dob] !=""
 
-      #new_user.save! ? redirect('/login') : fail(flash[:error] = "All fields are required")
-      send_activation_email(params[:username],params[:password],params[:email],params[:address],params[:full_name],params[:dob]) ? redirect('/success') : fail(flash[:error] = "All fields are required")
+      send_activation_email(params[:username],params[:password],params[:email],params[:address],params[:full_name],params[:dob]) ? redirect('/success') : fail("Whoops, our bad. Something went terribly wrong with the nuclear codes.")
 
     else
-      fail flash[:error] = "Passwords do not match."
+      fail('Passwords do not match.')
     end
   rescue => e
     logger.error(e)
-    flash[:error] = "Well this happened: #{e}"
+    flash[:error] = "#{e}"
     redirect '/register'
 
   end
