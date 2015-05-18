@@ -1,4 +1,5 @@
 require 'jwt'
+require 'pony'
 
 module CreditCardHelper
   def validate_card(card_num)
@@ -50,4 +51,38 @@ module CreditCardHelper
   flash[:notice] = "You have been logged out. Now get out."
   redirect '/'
   end
+
+  def send_activation_email(username, password, email,address,full_name,dob)
+  payload = {username: username, password: password, email: email, address: address, full_name: full_name, dob: dob}
+  token = JWT.encode payload, ENV['TK_KEY'], 'HS256'
+  #flash[:notice] = token
+  url = 'http://localhost:9292/activate?tk='+token
+  Pony.mail(
+    :to => email,
+    :from => 'c_man182@yahoo.com',
+    :subject => 'Activate your account',
+    :html_body => '<h1>Click <a href=' + url + '>here</a> to activate your account.</h1>',
+    :body => "In case you can't read html, copy this link into the address bar of your browser:" + url
+  )
+  end
+
+  def create_user(token)
+
+    if token == nil then
+      { :message => "What are you trying to pull, slick?"}
+    else
+      decoded_token = JWT.decode token, ENV['TK_KEY'], true
+      payload = decoded_token.first
+
+      newuser = User.new(username: payload["username"], email: payload["email"])
+      newuser.password = payload["password"]
+      newuser.field_encrypt(payload["address"],:address)
+      newuser.field_encrypt(payload["full_name"],:full_name)
+      newuser.field_encrypt(payload["dob"],:dob)
+      newuser.save!
+      { :message => "You are good to go. Enjoy our wonderful API."}
+    end
+  end
+
+
 end

@@ -14,6 +14,7 @@ gem 'haml'
 gem 'protected_attributes'
 gem 'rack-flash3'
 gem 'jwt'
+gem 'pony'
 
 group :development, :test do
   gem 'sqlite3'

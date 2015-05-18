@@ -106,7 +106,8 @@ post '/register' do
       params[:full_name] != "" ? new_user.field_encrypt(params[:full_name],:full_name) : fail(flash[:error] = "We require a full name.")
       params[:dob] != "" ? new_user.field_encrypt(params[:dob],:dob) : fail(flash[:error] = "DOB is blank")
 
-      new_user.save! ? redirect('/login') : fail(flash[:error] = "All fields are required")
+      #new_user.save! ? redirect('/login') : fail(flash[:error] = "All fields are required")
+      send_activation_email(params[:username],params[:password],params[:email],params[:address],params[:full_name],params[:dob]) ? redirect('/success') : fail(flash[:error] = "All fields are required")
 
     else
       fail flash[:error] = "Passwords do not match."
@@ -140,5 +141,14 @@ post '/newcard' do
   cc_credit_nt = params[:cc_net].to_s unless params[:cc_net].empty?
   @creation_results = new_card(cc_num, cc_owner, cc_exp_date, cc_credit_nt)
   haml :newcard
+end
+
+get '/success' do
+  haml :registration_success
+end
+
+get '/activate' do
+  @activation_results = create_user(params[:tk])
+  haml :activate
 end
 end
