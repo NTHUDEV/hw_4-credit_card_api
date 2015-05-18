@@ -20,14 +20,18 @@ configure :development, :test do
 end
 
 configure do
-  use Rack::Session::Cookie
+  use Rack::Session::Cookie, secret: ENV['TK_KEY']
   enable :logging
   use Rack::Flash, :sweep => true
 end
 
 
+#before do
+#@current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
+#end
+
 before do
-@current_user = session[:user_id] ? User.find_by_id(session[:user_id]) : nil
+@current_user = find_user_by_token(session[:auth_token])
 end
 
 #API
@@ -93,7 +97,7 @@ end
 
 post '/register' do
   logger.info('REGISTER')
-  
+
   begin
     if params[:password] == params[:password_confirm]
       params[:username] != "" && params[:email] != nil ? new_user = User.new(username: params[:username], email: params[:email]) : fail(flash[:error] = "All fields are required")
