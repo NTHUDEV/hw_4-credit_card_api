@@ -15,6 +15,7 @@ gem 'protected_attributes'
 gem 'rack-flash3'
 gem 'jwt'
 gem 'pony'
+gem 'sendgrid-ruby'
 
 group :development, :test do
   gem 'sqlite3'
