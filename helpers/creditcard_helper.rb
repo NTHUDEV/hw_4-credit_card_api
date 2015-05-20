@@ -50,8 +50,8 @@ module CreditCardHelper
   token = JWT.encode payload, ENV['TK_KEY'], 'HS256'
   url = request.base_url + '/activate?tk=' + token
 
-  client = SendGrid::Client.new(api_user: 'csrordzhn', api_key: 'darth bambi sleep1')
-
+  #client = SendGrid::Client.new(api_user: 'csrordzhn', api_key: 'darth bambi sleep1')
+  client = SendGrid::Client.new(api_user: ENV['SG_USER'], api_key: ENV['SG_PW'])
   mail = SendGrid::Mail.new do |m|
     m.to = email
     m.from = 'acctservices.emfg@gmail.com'
