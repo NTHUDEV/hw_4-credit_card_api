@@ -106,7 +106,7 @@ post '/register' do
       fail('You do not expect us to call by your username...right?') unless params[:full_name] !=""
       fail('Yeah, we need your DOB even though you are hiding it.') unless params[:dob] !=""
 
-      send_activation_email_sg(params[:username],params[:password],params[:email],params[:address],params[:full_name],params[:dob]) ? redirect('/success') : fail("Whoops, our bad. Something went terribly wrong with the nuclear codes.")
+      send_activation_email(params[:username],params[:password],params[:email],params[:address],params[:full_name],params[:dob]) ? redirect('/success') : fail("Whoops, our bad. Something went terribly wrong with the nuclear codes.")
 
     else
       fail('Passwords do not match.')

@@ -3,9 +3,10 @@ require 'pony'
 require 'sendgrid-ruby'
 require 'base64'
 require 'rbnacl/libsodium'
+require_relative 'email_helper'
 
 module CreditCardHelper
-
+  include EmailHelper
   def validate_card(card_num)
     creditcard = CreditCard.new
     creditcard.number = card_num
@@ -61,6 +62,16 @@ module CreditCardHelper
   end
 
   client.send(mail)
+
+  end
+
+  def send_activation_email(username, password, email,address,full_name,dob)
+
+  payload = {username: username, password: password, email: email, address: address, full_name: full_name, dob: dob}
+  token = JWT.encode payload, ENV['TK_KEY'], 'HS256'
+  url = request.base_url + '/activate?tk=' + token
+
+  send_reg_email(email,url)
 
   end
 
