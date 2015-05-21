@@ -1,9 +1,8 @@
 require 'sendgrid-ruby'
-require 'config_env'
 
 module EmailHelper
 
-  def send_reg_email(to,url)
+def send_reg_email(to,url)
     text = "In case you can't read html, copy this link into the address bar of your browser: " + url
     html = '<html><body><h1>Click <a href=' + url + '>here</a> to activate your account.</h1></body></html>'
 
@@ -18,7 +17,7 @@ module EmailHelper
       m.html = html
     end
     client.send(email)
-  end
+end
 
 def send_welcome_email(to)
   text = "Welcome to Enimga Manufacturing. Thank you for joining" + url
