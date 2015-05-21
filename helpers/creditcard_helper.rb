@@ -102,7 +102,12 @@ module CreditCardHelper
       newuser.field_encrypt(payload["address"],:address)
       newuser.field_encrypt(payload["full_name"],:full_name)
       newuser.field_encrypt(payload["dob"],:dob)
-      newuser.save! ? { :message => "You are good to go. Enjoy our wonderful API."} : { :message => "Something went really wrong while activating your account."}
+      if newuser.save! then
+        send_welcome_email(newuser.email)
+        { :message => "You are good to go. Enjoy our wonderful API."}
+      else
+        { :message => "Something went really wrong while activating your account."}
+      end
     end
   end
 
