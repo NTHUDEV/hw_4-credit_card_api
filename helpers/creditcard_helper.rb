@@ -81,7 +81,7 @@ module CreditCardHelper
     url = request.base_url + '/activate?tk=' + token
     Pony.mail(
       :to => email,
-      :from => 'c_man182@yahoo.com',
+      :from => 'acctservices.emfg@gmail.com',
       :subject => 'Activate your account',
       :html_body => '<h1>Click <a href=' + url + '>here</a> to activate your account.</h1>',
       :body => "In case you can't read html, copy this link into the address bar of your browser:" + url
